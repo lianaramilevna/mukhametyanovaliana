@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Мухаметянова Лиана Рамилевна</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="header">Список задач</div>
+
+  <div class="new-task-box">
+    <h2>Новая задача</h2>
+    <div class="new-task">
+      <input type="text" id="taskInput" placeholder="Название задачи..." />
+      <button id="addTaskBtn">+ Добавить</button>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="column backlog">
+      <h2>Бэклог</h2>
+      <ul id="backlog">
+        <li>Выучить JS</li>
+        <li>Выучить React</li>
+        <li>Сделать дз</li>
+      </ul>
+    </div>
+
+    <div class="column in-progress">
+      <h2>В процессе</h2>
+      <ul id="inProgress">
+        <li>Выпить смузи</li>
+        <li>Попить воды</li>
+      </ul>
+    </div>
+
+    <div class="column done">
+      <h2>Готово</h2>
+      <ul id="done">
+        <li>Позвонить маме</li>
+        <li>Погладить кота</li>
+      </ul>
+    </div>
+
+    <div class="column trash">
+      <h2>Корзина</h2>
+      <ul id="trash">
+        <li>Сходить погулять</li>
+        <li>Прочитать Войну и Мир</li>
+      </ul>
+      <button id="clearTrashBtn">✕ Очистить</button>
+    </div>
+  </div>
+</body>
+</html>
