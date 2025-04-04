@@ -1,26 +1,22 @@
 import HeaderComponent from './view/header-component.js';
 import FormAddTaskComponent from './view/form-add-task-component.js';
-import BoardComponent from './view/board-component.js';
-import ListComponent from './view/task-list-component.js';
-import TaskComponent from './view/task-component.js';
+import TasksBoardPresenter from './presenter/tasks-board-presenter.js';
 import { render, RenderPosition } from './framework/render.js';
+import TasksModel from './model/task-model.js';
 
-const bodyContainer = document.querySelector('.board-app');
+const bodyContainer  = document.querySelector('.board-app');
+
+const tasksModel = new TasksModel();
+
+const tasksBoardPresenter = new TasksBoardPresenter({
+  boardContainer: bodyContainer,
+  tasksModel,
+});
 
 render(new HeaderComponent(), bodyContainer, RenderPosition.AFTERBEGIN);
-render(new FormAddTaskComponent(), bodyContainer);
 
-const boardComponent = new BoardComponent();
-render(boardComponent, bodyContainer);
+const formAddTaskComponent = new FormAddTaskComponent();
+render(formAddTaskComponent, bodyContainer, RenderPosition.BEFOREEND);
 
-const boardElement = boardComponent.getElement();
+tasksBoardPresenter.init();
 
-for (let i = 0; i < 4; i++) {
-  const listComponent = new ListComponent();
-  render(listComponent, boardElement);
-  const taskListElement = listComponent.getTaskListElement();
-  for (let j = 0; j < 4; j++) {
-    const taskComponent = new TaskComponent();
-    render(taskComponent, taskListElement);
-  }
-}

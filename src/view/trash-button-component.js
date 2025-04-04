@@ -1,14 +1,14 @@
 import { createElement } from '../framework/render.js';
 
-function createBoardComponentTemplate() {
+function createTrashClearButtonTemplate() {
   return `
-    <div class="taskboard"></div>
+    <button class="trash-button"> ✕ Очистить </button>
   `;
 }
 
-export default class BoardComponent {
+export default class TrashClearButtonComponent {
   getTemplate() {
-    return createBoardComponentTemplate();
+    return createTrashClearButtonTemplate();
   }
 
   getElement() {

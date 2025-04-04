@@ -2,7 +2,7 @@ import { createElement } from '../framework/render.js';
 
 function createFormAddTaskComponentTemplate() {
   return `
-    <div class="new-task-box">
+    <div class="add-task">
       <h2>Новая задача</h2>
       <div class="new-task">
         <input type="text" id="taskInput" placeholder="Название задачи..." />

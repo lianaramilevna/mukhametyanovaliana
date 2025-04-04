@@ -7,13 +7,13 @@ body {
 .header {
   background-color: #2c60af;
   color: #fff;
-  padding: 25px; 
+  padding: 25px;
   padding-left: 50px;
   font-size: 26px;
   font-weight: bold;
 }
 
-.new-task-box {
+.add-task {
   display: inline-block;
   background: #fff;
   border-radius: 15px;
@@ -21,7 +21,7 @@ body {
   margin: 50px 50px 25px 50px;
 }
 
-.new-task-box h2 {
+.add-task h2 {
   margin-bottom: 25px;
   font-size: 20px;
 }
@@ -55,17 +55,19 @@ body {
   background: #245292;
 }
 
-.board {
+
+.taskboard {
   display: flex;
   gap: 50px;
-  margin-left: 50px;
-  margin-right: 50px;
+  
 }
 
 .column {
   width: 25%;
   display: flex;
   flex-direction: column;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 
 .column h2 {
@@ -75,8 +77,52 @@ body {
   border-radius: 10px;
   margin-bottom: 20px;
   align-self: flex-start;
-  background: #ddd;   
-  color: #565555;    
+}
+
+.column--backlog h2 {
+  background-color: #ddd; 
+  color: #555; 
+}
+
+.column--processing h2 {
+  background-color: #a5ddf6; 
+  color: #0a4c79; 
+}
+
+.column--done h2 {
+  background-color: #c3f5c5; 
+  color: #387d39; 
+}
+
+.column--trash h2 {
+  background-color: #f8bcc3; 
+  color: #9e2a2f; 
+}
+
+.taskboard__item {
+  margin: 10px 0;
+  padding: 7px;
+  border-radius: 10px;
+  box-shadow: 0 0 2px #00000033;
+  cursor: grab;
+  background: #fff;
+  border-left: 8px solid #ddd; 
+}
+
+.task--backlog {
+  border-left-color: #ddd; 
+}
+
+.task--processing {
+  border-left-color: #a5ddf6; 
+}
+
+.task--done {
+  border-left-color: #c3f5c5; 
+}
+
+.task--trash {
+  border-left-color: #f8bcc3; 
 }
 
 ul {
@@ -87,19 +133,10 @@ ul {
   min-height: 70px;
 }
 
-.column li {
-  margin: 10px 0;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 2px #00000033;
-  cursor: grab;
-  background: #fff;
-  border-left: 8px solid #ddd; 
-}
 
-.trash button {
+.trash-button {
   margin-top: 10px;
-  padding: 15px;
+  padding: 7px;
   border: none;
   background: #a54d58;
   color: #fff;
@@ -109,6 +146,6 @@ ul {
   font-family: Georgia, serif;
 }
 
-.trash button:hover {
+.trash-button:hover {
   background: #9e443a;
 }

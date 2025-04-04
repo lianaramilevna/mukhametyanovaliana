@@ -1,17 +1,28 @@
 import { createElement } from '../framework/render.js';
+import { Status, StatusLabel } from "../const.js";
 
-function createListComponentTemplate() {
+function createListComponentTemplate(status) {
+  const title = StatusLabel[status];
+
+  const columnClass = `column--${status}`;
+
   return `
-    <div class="column">
-      <h2>Название блока</h2>
+    <div class="column ${columnClass}">
+      <h2>${title}</h2>
       <ul class="task-list"></ul>
     </div>
   `;
 }
 
+
 export default class ListComponent {
+
+  constructor(status) {
+    this.status = status;
+  }
+
   getTemplate() {
-    return createListComponentTemplate();
+    return createListComponentTemplate(this.status);
   }
 
   getElement() {
