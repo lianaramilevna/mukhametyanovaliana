@@ -4,6 +4,7 @@ import BoardComponent from "../view/board-component.js";
 import { render } from "../framework/render.js";
 import { Status } from "../const.js";
 import TrashClearButtonComponent from "../view/trash-button-component.js";
+import NoTaskComponent from "../view/no-task-component.js";
 
 export default class TasksBoardPresenter {
   #boardContainer = null;
@@ -16,28 +17,45 @@ export default class TasksBoardPresenter {
     this.#tasksModel = tasksModel;
   }
 
-  init() {
-    this.#boardTasks = [...this.#tasksModel.getTasks()];
-    render(this.#tasksBoardComponent, this.#boardContainer);
+  // Отрисовка одной задачи
+  #renderTask(task, container) {
+    const taskComponent = new TaskComponent({ task });
+    render(taskComponent, container);
+  }
 
-    const statuses = [Status.BACKLOG, Status.PROCESSING, Status.DONE, Status.TRASH];
-
-    for (const status of statuses) {
-      const tasksListComponent = new ListComponent(status);
-      render(tasksListComponent, this.#tasksBoardComponent.getElement());
-
-      const taskListElement = tasksListComponent.getTaskListElement();
-
-      const filteredTasks  = this.#boardTasks.filter(task => task.status === status);
-      filteredTasks .forEach(task => {
-        const taskComponent = new TaskComponent({ task });
-        render(taskComponent, taskListElement);
+  // Отрисовка списка задач по статусу, с заглушкой если задач нет
+  #renderTasksList(tasksForStatus, container, isTrash = false) {
+    if (tasksForStatus.length > 0) {
+      tasksForStatus.forEach((task) => {
+        this.#renderTask(task, container);
       });
 
-      if (status === Status.TRASH) {
-        const trashClearButtonComponent = new TrashClearButtonComponent();
-        render(trashClearButtonComponent, tasksListComponent.getElement(), 'beforeend');
+      if (isTrash) {
+        render(new TrashClearButtonComponent(), container, "beforeend");
       }
+    } else {
+      const noTaskComponent = new NoTaskComponent();
+      render(noTaskComponent, container);
     }
+  }
+
+  // Отрисовка всей доски
+  #renderBoard() {
+    render(this.#tasksBoardComponent, this.#boardContainer);
+
+    Object.values(Status).forEach((status) => {
+      const tasksListComponent = new ListComponent(status);
+      render(tasksListComponent, this.#tasksBoardComponent.element);
+
+      const tasksForStatus = this.#boardTasks.filter((task) => task.status === status);
+      const isTrash = status === Status.TRASH;
+
+      this.#renderTasksList(tasksForStatus, tasksListComponent.element, isTrash);
+    });
+  }
+
+  init() {
+    this.#boardTasks = [...this.#tasksModel.tasks];
+    this.#renderBoard();
   }
 }

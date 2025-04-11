@@ -1,42 +1,24 @@
-import { createElement } from '../framework/render.js';
-import { Status, StatusLabel } from "../const.js";
+import { AbstractComponent } from '../framework/view/abstract-component.js';
+import { StatusLabel } from "../const.js";
 
-function createListComponentTemplate(status) {
-  const title = StatusLabel[status];
-
-  const columnClass = `column--${status}`;
-
-  return `
-    <div class="column ${columnClass}">
-      <h2>${title}</h2>
-      <ul class="task-list"></ul>
-    </div>
-  `;
-}
-
-
-export default class ListComponent {
-
+export default class ListComponent extends AbstractComponent {
   constructor(status) {
+    super();
     this.status = status;
   }
 
-  getTemplate() {
-    return createListComponentTemplate(this.status);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
+  get template() {
+    const title = StatusLabel[this.status];
+    const columnClass = `column--${this.status}`;
+    return `
+      <div class="column ${columnClass}">
+        <h2>${title}</h2>
+        <div class="task-list"></div>
+      </div>
+    `;
   }
 
   getTaskListElement() {
-    return this.getElement().querySelector('.task-list');
-  }
-
-  removeElement() {
-    this.element = null;
+    return this.element.querySelector('.task-list');
   }
 }
