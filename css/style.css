@@ -160,3 +160,8 @@ ul {
   border-radius: 8px;
   list-style: none;
 }
+
+.trash-button:disabled {
+  cursor: not-allowed;
+}
+

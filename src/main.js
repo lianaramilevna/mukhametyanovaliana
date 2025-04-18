@@ -15,8 +15,15 @@ const tasksBoardPresenter = new TasksBoardPresenter({
 
 render(new HeaderComponent(), bodyContainer, RenderPosition.AFTERBEGIN);
 
-const formAddTaskComponent = new FormAddTaskComponent();
+const formAddTaskComponent = new FormAddTaskComponent({
+  onClick: handleNewTaskButtonClick
+});
 render(formAddTaskComponent, bodyContainer, RenderPosition.BEFOREEND);
 
 tasksBoardPresenter.init();
+
+// Обработчик события для добавления новой задачи
+function handleNewTaskButtonClick() {
+  tasksBoardPresenter.createTask();
+}
 
