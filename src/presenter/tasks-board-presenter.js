@@ -18,6 +18,10 @@ export default class TasksBoardPresenter {
     this.#tasksModel.addObserver(this.#handleModelChange.bind(this));
   }
 
+  #handleTaskDrop = (taskId, newStatus, beforeTaskId) => {
+    this.#tasksModel.moveTask(taskId, newStatus, beforeTaskId);
+  };
+
   get tasks() {
     return this.#tasksModel.tasks;
   }
@@ -38,7 +42,7 @@ export default class TasksBoardPresenter {
         onClear: this.#clearTrashHandler,
         isDisabled: tasksForStatus.length === 0
       });
-      render(clearBtn, container, "beforeend");
+      render(clearBtn, container, RenderPosition.BEFOREEND);
     }
   }
 
@@ -46,14 +50,12 @@ export default class TasksBoardPresenter {
     render(this.#tasksBoardComponent, this.#boardContainer);
 
     Object.values(Status).forEach((status) => {
-      const listComponent = new ListComponent(status);
+      const listComponent = new ListComponent(status, this.#handleTaskDrop);
       render(listComponent, this.#tasksBoardComponent.element);
 
-      const tasksForStatus = this.#tasksModel.getTasksByStatus
-        ? this.#tasksModel.getTasksByStatus(status)
-        : this.tasks.filter((t) => t.status === status);
-
-      this.#renderTasksList(tasksForStatus, listComponent.element, status === Status.TRASH);
+      const tasksForStatus = this.#tasksModel.getTasksByStatus(status);
+      const listContainer = listComponent.getTaskListElement();
+      this.#renderTasksList(tasksForStatus, listContainer, status === Status.TRASH);
     });
   }
 

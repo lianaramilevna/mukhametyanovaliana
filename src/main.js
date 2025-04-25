@@ -22,7 +22,6 @@ render(formAddTaskComponent, bodyContainer, RenderPosition.BEFOREEND);
 
 tasksBoardPresenter.init();
 
-// Обработчик события для добавления новой задачи
 function handleNewTaskButtonClick() {
   tasksBoardPresenter.createTask();
 }
