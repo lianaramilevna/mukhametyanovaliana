@@ -166,5 +166,13 @@ ul {
 
 .trash-button:disabled {
   cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #a54d58;
 }
 
+.board__loading {
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  padding: 40px;
+}

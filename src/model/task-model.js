@@ -1,36 +1,56 @@
-import { tasks } from "../mock/task.js";
-import { generateID } from "../utils.js";
+import Observable from '../framework/observable.js';
+import { generateID } from '../utils.js';
+import { UserAction, UpdateType } from '../const.js';
 
-export default class TasksModel {
-  #boardtasks = tasks;
-  #observers = [];
+export default class TasksModel extends Observable {
+  #tasksApiService = null;
+  #boardtasks = [];
+
+  constructor({ tasksApiService }) {
+    super();
+    this.#tasksApiService = tasksApiService;
+  }
 
   get tasks() {
     return this.#boardtasks;
   }
 
-  getTasksByStatus(status) {
-    return this.#boardtasks.filter(task => task.status === status);
-  }
-
- 
-  addTask(title) {
-    if (!title.trim()) {
-      return;
+  async init() {
+    try {
+      this.#boardtasks = await this.#tasksApiService.tasks;
+    } catch {
+      this.#boardtasks = [];
     }
-    const newTask = {
-      id: generateID(),
-      title,
-      status: 'backlog'
-    };
-    this.#boardtasks.push(newTask);
-    this.#notifyObservers();
-    return newTask;
+    this._notify(UpdateType.INIT);
   }
 
-  clearTrash() {
-    this.#boardtasks = this.#boardtasks.filter(task => task.status !== 'trash');
-    this.#notifyObservers();
+  getTasksByStatus(status) {
+    return this.#boardtasks.filter(t => t.status === status);
+  }
+
+  async addTask(title) {
+    const newTaskData = { title, status: 'backlog', id: generateID() };
+    const created = await this.#tasksApiService.addTask(newTaskData);
+    this.#boardtasks.push(created);
+    this._notify(UserAction.ADD_TASK, created);
+    return created;
+  }
+
+  async updateTaskStatus(taskId, newStatus) {
+    const task = this.#boardtasks.find(t => t.id === taskId);
+    if (!task) return;
+    const prevStatus = task.status;
+    task.status = newStatus;
+
+    try {
+      const updated = await this.#tasksApiService.updateTask(task);
+      Object.assign(task, updated);
+      this._notify(UserAction.UPDATE_TASK, task);
+    } catch (err) {
+      console.error(err);
+      task.status = prevStatus;
+      throw err;
+    }
   }
 
   moveTask(taskId, newStatus, beforeTaskId) {
@@ -40,36 +60,31 @@ export default class TasksModel {
     const [task] = this.#boardtasks.splice(idx, 1);
     task.status = newStatus;
 
-    let insertIndex = this.#boardtasks.length; 
+    let insertIndex = this.#boardtasks.length;
     if (beforeTaskId) {
       const refIdx = this.#boardtasks.findIndex(t => t.id === beforeTaskId);
-      if (refIdx !== -1) {
-        insertIndex = refIdx;
-      }
+      if (refIdx !== -1) insertIndex = refIdx;
     } else {
-      const same = this.#boardtasks
+      const sameStatus = this.#boardtasks
         .map((t, i) => t.status === newStatus ? i : -1)
         .filter(i => i >= 0);
-      if (same.length) {
-        insertIndex = same[same.length - 1] + 1;
-      } else {
-        const firstOther = this.#boardtasks.findIndex(t => t.status !== newStatus);
-        if (firstOther !== -1) insertIndex = firstOther;
+      if (sameStatus.length) {
+        insertIndex = sameStatus[sameStatus.length - 1] + 1;
       }
     }
+
     this.#boardtasks.splice(insertIndex, 0, task);
-    this.#notifyObservers();
-  }
-  
-  addObserver(observer) {
-    this.#observers.push(observer);
+    this._notify(UserAction.UPDATE_TASK, task);
   }
 
-  removeObserver(observer) {
-    this.#observers = this.#observers.filter(obs => obs !== observer);
+  async clearTrashTasks() {
+    const trash = this.#boardtasks.filter(t => t.status === 'trash');
+    await Promise.all(trash.map(t => this.#tasksApiService.deleteTask(t.id)));
+    this.#boardtasks = this.#boardtasks.filter(t => t.status !== 'trash');
+    this._notify(UserAction.DELETE_TASK, { status: 'trash' });
   }
 
-  #notifyObservers() {
-    this.#observers.forEach(observer => observer());
+  hasTrashTasks() {
+    return this.#boardtasks.some(t => t.status === 'trash');
   }
 }
